@@ -1,0 +1,6 @@
+@ApiMar_HostAddress = http://localhost:5155
+
+GET {{ApiMar_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
