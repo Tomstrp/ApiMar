@@ -67,7 +67,7 @@ builder.Services.AddSwaggerGen(c =>
 			Array.Empty<string>()
 		}
 	});
-}); ;
+});
 
 builder.Services.AddCors(o => o.AddPolicy("CorsPolicy", builder =>
 {

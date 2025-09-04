@@ -9,5 +9,4 @@ public partial class ServizioDTO
 	public bool? Notturno { get; set; }
 	public string Sede { get; set; } = null!;
 	public List<OrganicoDisponibileDTO>? OrganiciDisponibili { get; set; } = null;
-	//public List<OrganicoDTO> Organici { get; set; } = new List<OrganicoDTO>();
 }

@@ -3,9 +3,9 @@ using ApiMar.Models;
 using ApiMar.Models.EF.BriefingCon;
 using ApiMar.Models.DTO;
 using ApiMar.Models.DTO.BriefingCon;
-using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
 using Mapster;
+using System.Collections.Generic;
 
 namespace ApiMar.Repositories.Interfaces
 {
@@ -18,15 +18,31 @@ namespace ApiMar.Repositories.Interfaces
 			_context = context;
 		}
 
-		public async Task<List<ServizioDTO>> Servizi(int page, int elementInPage)
+		public async Task<ResultListDTO<ServizioListDTO>> Servizi(int pageIndex, int pageSize, int id, DateOnly? data, string turno, bool? notturno, string username)
 		{
-			var result = await _context.Servizi
+			var query = _context.Servizi.AsQueryable();
+
+			if (id != 0)
+				query = query.Where(x => x.Id == id);
+			if (data != null)
+				query = query.Where(x => x.Data == data);
+			if (turno != string.Empty)
+				query = query.Where(x => x.Turno.ToString() == turno.ToLower());
+			if (notturno != null)
+				query = query.Where(x => x.Notturno == notturno);
+			if (username != string.Empty)
+				query = query.Where(x => x.Username.ToLower().Contains(username.ToLower()));
+
+			var countResults = await query.CountAsync();
+			var result = await query
 					.OrderByDescending(x => x.Data)
-					.Skip((page - 1) * elementInPage)
-					.Take(elementInPage)
-					.ProjectToType<ServizioDTO>()
+					.ThenBy(x => x.Notturno != null && x.Notturno == true ? 0 : 1)
+					.Skip((pageIndex - 1) * pageSize)
+					.Take(pageSize)
+					.ProjectToType<ServizioListDTO>()
 					.ToListAsync();
-			return result;
+
+			return new ResultListDTO<ServizioListDTO>() { Count = countResults, Result = result };
 		}
 
 		public async Task<ServizioDTO?> Servizio(int id)

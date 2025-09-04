@@ -21,11 +21,11 @@ namespace ApiMar.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Servizi(int page = 1, int elementInPage = 20)
+		public async Task<IActionResult> Servizi(int pageIndex = 1, int pageSize = 20, int id = 0, DateOnly? data = null, string turno = "", bool? notturno = null, string username = "")
 		{
 			try
 			{
-				var result = await _briefingConRepository.Servizi(page, elementInPage);
+				var result = await _briefingConRepository.Servizi(pageIndex, pageSize, id, data, turno, notturno, username);
 				return Ok(result);
 			}
 			catch (Exception ex)
@@ -35,7 +35,7 @@ namespace ApiMar.Controllers
 			}
 			return BadRequest();
 		}
-		
+
 		[HttpGet]
 		public async Task<IActionResult> Servizio(int id)
 		{

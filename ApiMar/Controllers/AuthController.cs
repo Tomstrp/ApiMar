@@ -3,6 +3,7 @@ using ApiMar.Models.DTO.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using ApiMar.Models.DTO;
 
 namespace ApiMar.Controllers
 {
@@ -23,21 +24,21 @@ namespace ApiMar.Controllers
 			_authRepository = authRepository;
 		}
 
-		[HttpGet]
-		public async Task<IActionResult> Login([FromQuery] string username, [FromQuery] string password)
+		[HttpPost()]
+		public async Task<IActionResult> Login([FromBody] LoginDTO LoginData)
 		{
 			try
 			{
-				UserWaucDTO? u = await _authRepository.Login(_configuration, username, password);
+				UserWaucDTO? u = await _authRepository.Login(_configuration, LoginData.Username, LoginData.Password);
 				var token = _authRepository.JwtTokenGenerate(_configuration, u);
-				return Ok(token);
+				return Ok(new { token });
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, $"Errore in AuthController - Login: {ex.Message}");
 				BadRequest();
 			}
-			return BadRequest();
+			return Unauthorized(new { message = "Credenziali non valide" });
 		}
 
 		[HttpGet]
